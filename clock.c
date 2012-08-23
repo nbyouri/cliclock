@@ -70,13 +70,23 @@ const Bool number[][15] =
      {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
 };
 /* User changeable options. */
-#define BG_COLOR COLOR_RED;
-
+/* Available:
+ * COLOR_BLACK
+ * COLOR_RED
+ * COLOR_GREEN
+ * COLOR_YELLOW
+ * COLOR_BLUE
+ * COLOR_MAGENTA
+ * COLOR_CYAN
+ * COLOR_WHITE
+*/
+#define FG_COLOR COLOR_BLUE;
+#define BG_COLOR COLOR_BLACK;
 void
 init(void)
 {
      struct sigaction sig;
-     cliclock->bg = COLOR_BLACK;
+     cliclock->bg = BG_COLOR;
 
      /* Init ncurses */
      initscr();
@@ -259,7 +269,7 @@ main(int argc, char **argv)
      /* Alloc cliclock */
      cliclock = malloc(sizeof(cliclock_t));
 
-     cliclock->option.color = BG_COLOR; 
+     cliclock->option.color = FG_COLOR; 
 
      init();
 
