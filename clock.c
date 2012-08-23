@@ -7,12 +7,9 @@
 #include <getopt.h>
 
 /* Macro */
-#define NORMFRAMEW 35
-#define SECFRAMEW  54
-
 typedef enum { False, True } Bool;
 
-/* Global ttyclock struct */
+/* Global cliclock struct */
 typedef struct
 {
      /* while() boolean */
@@ -38,7 +35,6 @@ typedef struct
           unsigned int hour[2];
           unsigned int minute[2];
           unsigned int second[2];
-          char datestr[256];
      } date;
 
      /* time.h utils */
@@ -48,7 +44,7 @@ typedef struct
      /* Clock member */
      WINDOW *framewin;
 
-} ttyclock_t;
+} cliclock_t;
 
 /* Prototypes */
 void init(void);
@@ -57,11 +53,9 @@ void update_hour(void);
 void draw_number(int n, int x, int y);
 void draw_clock(void);
 void clock_move(int x, int y, int w, int h);
-void set_second(void);
-void set_center(void);
 
 /* Global variable */
-ttyclock_t *ttyclock;
+cliclock_t *cliclock;
 
 /* Number matrix */
 const Bool number[][15] =
@@ -82,7 +76,7 @@ void
 init(void)
 {
      struct sigaction sig;
-     ttyclock->bg = COLOR_BLACK;
+     cliclock->bg = COLOR_BLACK;
 
      /* Init ncurses */
      initscr();
@@ -95,12 +89,12 @@ init(void)
 
      /* Init default terminal color */
      if(use_default_colors() == OK)
-          ttyclock->bg = -1;
+          cliclock->bg = -1;
 
      /* Init color pair */
-     init_pair(0, ttyclock->bg, ttyclock->bg);
-     init_pair(1, ttyclock->bg, ttyclock->option.color);
-     init_pair(2, ttyclock->option.color, ttyclock->bg);
+     init_pair(0, cliclock->bg, cliclock->bg);
+     init_pair(1, cliclock->bg, cliclock->option.color);
+     init_pair(2, cliclock->option.color, cliclock->bg);
      refresh();
 
      /* Init signal handler */
@@ -112,32 +106,37 @@ init(void)
      sigaction(SIGSEGV,  &sig, NULL);
 
      /* Init global struct */
-     ttyclock->running = True;
-     if(!ttyclock->geo.x)
-          ttyclock->geo.x = 0;
-     if(!ttyclock->geo.y)
-          ttyclock->geo.y = 0;
-     if(!ttyclock->geo.a)
-          ttyclock->geo.a = 1;
-     if(!ttyclock->geo.b)
-          ttyclock->geo.b = 1;
-     ttyclock->geo.w = SECFRAMEW;
-     ttyclock->geo.h = 7;
-     ttyclock->tm = localtime(&(ttyclock->lt));
-     ttyclock->lt = time(NULL);
+     cliclock->running = True;
+     if(!cliclock->geo.x)
+          cliclock->geo.x = 0;
+     if(!cliclock->geo.y)
+          cliclock->geo.y = 0;
+     if(!cliclock->geo.a)
+          cliclock->geo.a = 1;
+     if(!cliclock->geo.b)
+          cliclock->geo.b = 1;
+     cliclock->geo.w = 54;
+     cliclock->geo.h = 7;
+     cliclock->tm = localtime(&(cliclock->lt));
+     cliclock->lt = time(NULL);
      update_hour();
 
      /* Create clock win */
-     ttyclock->framewin = newwin(ttyclock->geo.h,
-                                 ttyclock->geo.w,
-                                 ttyclock->geo.x,
-                                 ttyclock->geo.y);
-     box(ttyclock->framewin, 0, 0);
-     wborder(ttyclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-
-     set_center();
-
-     wrefresh(ttyclock->framewin);
+     cliclock->framewin = newwin(cliclock->geo.h,
+                                 cliclock->geo.w,
+                                 cliclock->geo.x,
+                                 cliclock->geo.y);
+     /*box(cliclock->framewin, 0, 0);*/
+		 /*
+      cliclock->framewin = newwin((LINES / 2 - (cliclock->geo.h / 2)),
+                                 (COLS  / 2 - (cliclock->geo.w / 2)),
+                                 cliclock->geo.w,
+                                 cliclock->geo.h,
+			                           cliclock->geo.x,
+																 cliclock->geo.y);
+			*/
+                                 wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+     wrefresh(cliclock->framewin);
 
      return;
 }
@@ -154,7 +153,7 @@ signal_handler(int signal)
           /* Interruption signal */
      case SIGINT:
      case SIGTERM:
-          ttyclock->running = False;
+          cliclock->running = False;
           /* Segmentation fault signal */
           break;
      case SIGSEGV:
@@ -172,22 +171,22 @@ update_hour(void)
 {
      int ihour;
 
-     ttyclock->tm = localtime(&(ttyclock->lt));
-     ttyclock->lt = time(NULL);
+     cliclock->tm = localtime(&(cliclock->lt));
+     cliclock->lt = time(NULL);
 
-     ihour = ttyclock->tm->tm_hour;
+     ihour = cliclock->tm->tm_hour;
 
      /* Set hour */
-     ttyclock->date.hour[0] = ihour / 10;
-     ttyclock->date.hour[1] = ihour % 10;
+     cliclock->date.hour[0] = ihour / 10;
+     cliclock->date.hour[1] = ihour % 10;
 
      /* Set minutes */
-     ttyclock->date.minute[0] = ttyclock->tm->tm_min / 10;
-     ttyclock->date.minute[1] = ttyclock->tm->tm_min % 10;
+     cliclock->date.minute[0] = cliclock->tm->tm_min / 10;
+     cliclock->date.minute[1] = cliclock->tm->tm_min % 10;
 
      /* Set seconds */
-     ttyclock->date.second[0] = ttyclock->tm->tm_sec / 10;
-     ttyclock->date.second[1] = ttyclock->tm->tm_sec % 10;
+     cliclock->date.second[0] = cliclock->tm->tm_sec / 10;
+     cliclock->date.second[1] = cliclock->tm->tm_sec % 10;
 
      return;
 }
@@ -204,10 +203,10 @@ draw_number(int n, int x, int y)
                sy = y;
                ++x;
           }
-          wbkgdset(ttyclock->framewin, COLOR_PAIR(number[n][i/2]));
-          mvwaddch(ttyclock->framewin, x, sy, ' ');
+          wbkgdset(cliclock->framewin, COLOR_PAIR(number[n][i/2]));
+          mvwaddch(cliclock->framewin, x, sy, ' ');
      }
-     wrefresh(ttyclock->framewin);
+     wrefresh(cliclock->framewin);
 
      return;
 }
@@ -216,26 +215,26 @@ void
 draw_clock(void)
 {
      /* Draw hour numbers */
-     draw_number(ttyclock->date.hour[0], 1, 1);
-     draw_number(ttyclock->date.hour[1], 1, 8);
+     draw_number(cliclock->date.hour[0], 1, 1);
+     draw_number(cliclock->date.hour[1], 1, 8);
 
      /* 2 dot for number separation */
-     wbkgdset(ttyclock->framewin, COLOR_PAIR(1));
-     mvwaddstr(ttyclock->framewin, 2, 16, "  ");
-     mvwaddstr(ttyclock->framewin, 4, 16, "  ");
+     wbkgdset(cliclock->framewin, COLOR_PAIR(1));
+     mvwaddstr(cliclock->framewin, 2, 16, "  ");
+     mvwaddstr(cliclock->framewin, 4, 16, "  ");
 
      /* Draw minute numbers */
-     draw_number(ttyclock->date.minute[0], 1, 20);
-     draw_number(ttyclock->date.minute[1], 1, 27);
+     draw_number(cliclock->date.minute[0], 1, 20);
+     draw_number(cliclock->date.minute[1], 1, 27);
 
      /* 2 dot for number separation */
-     wbkgdset(ttyclock->framewin, COLOR_PAIR(1));
-     mvwaddstr(ttyclock->framewin, 2, NORMFRAMEW, "  ");
-     mvwaddstr(ttyclock->framewin, 4, NORMFRAMEW, "  ");
+     wbkgdset(cliclock->framewin, COLOR_PAIR(1));
+     mvwaddstr(cliclock->framewin, 2, 35, "  ");
+     mvwaddstr(cliclock->framewin, 4, 35, "  ");
 
      /* Draw second numbers */
-     draw_number(ttyclock->date.second[0], 1, 39);
-     draw_number(ttyclock->date.second[1], 1, 46);
+     draw_number(cliclock->date.second[0], 1, 39);
+     draw_number(cliclock->date.second[1], 1, 46);
 }
 
 void
@@ -243,44 +242,19 @@ clock_move(int x, int y, int w, int h)
 {
 
      /* Erase border for a clean move */
-     wbkgdset(ttyclock->framewin, COLOR_PAIR(0));
-     wborder(ttyclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-     werase(ttyclock->framewin);
-     wrefresh(ttyclock->framewin);
+     wbkgdset(cliclock->framewin, COLOR_PAIR(0));
+     wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+     werase(cliclock->framewin);
+     wrefresh(cliclock->framewin);
 
      /* Frame win move */
-     mvwin(ttyclock->framewin, (ttyclock->geo.x = x), (ttyclock->geo.y = y));
-     wresize(ttyclock->framewin, (ttyclock->geo.h = h), (ttyclock->geo.w = w));
+     mvwin(cliclock->framewin, (cliclock->geo.x = x), (cliclock->geo.y = y));
+     wresize(cliclock->framewin, (cliclock->geo.h = h), (cliclock->geo.w = w));
 
-     box(ttyclock->framewin, 0, 0);
-     wrefresh(ttyclock->framewin);
-
-     return;
-}
-
-void
-set_second(void)
-{
-     int new_w = SECFRAMEW;
-     int y_adj;
-
-     for(y_adj = 0; (ttyclock->geo.y - y_adj) > (COLS - new_w - 1); ++y_adj);
-
-     clock_move(ttyclock->geo.x, (ttyclock->geo.y - y_adj), new_w, ttyclock->geo.h);
-
-     set_center();
+     box(cliclock->framewin, 0, 0);
+     wrefresh(cliclock->framewin);
 
      return;
-}
-
-void
-set_center(void)
-{
-          clock_move((LINES / 2 - (ttyclock->geo.h / 2)),
-                     (COLS  / 2 - (ttyclock->geo.w / 2)),
-                     ttyclock->geo.w,
-                     ttyclock->geo.h);
-          wborder(ttyclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
 }
 
 int
@@ -288,11 +262,11 @@ main(int argc, char **argv)
 {
      int c;
 
-     /* Alloc ttyclock */
-     ttyclock = malloc(sizeof(ttyclock_t));
+     /* Alloc cliclock */
+     cliclock = malloc(sizeof(cliclock_t));
 
      /* Default color */
-     ttyclock->option.color = COLOR_BLUE; 
+     cliclock->option.color = COLOR_BLUE; 
 
      while ((c = getopt(argc, argv, "sh:C:")) != -1)
      {
@@ -303,23 +277,23 @@ main(int argc, char **argv)
                printf("usage :      clock [-h] [-C [0-7]]                               \n"
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -h            Show this page                                 \n");
-               free(ttyclock);
+               free(cliclock);
                exit(EXIT_SUCCESS);
                break;
 					case 'C':
 							 if(atoi(optarg) >= 0 && atoi(optarg) < 8)
-							      ttyclock->option.color = atoi(optarg);
+							      cliclock->option.color = atoi(optarg);
           }
      } 
      init();
 
-     while(ttyclock->running)
+     while(cliclock->running)
      {
           update_hour();
           draw_clock();
      }
 
-     free(ttyclock);
+     free(cliclock);
      endwin();
 
      return 0;
