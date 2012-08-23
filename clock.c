@@ -70,6 +70,7 @@ const Bool number[][15] =
      {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
 };
 /* User changeable options. */
+#define BG_COLOR COLOR_RED;
 
 void
 init(void)
@@ -258,7 +259,7 @@ main(int argc, char **argv)
      /* Alloc cliclock */
      cliclock = malloc(sizeof(cliclock_t));
 
-     cliclock->option.color = COLOR_BLUE; 
+     cliclock->option.color = BG_COLOR; 
 
      init();
 
