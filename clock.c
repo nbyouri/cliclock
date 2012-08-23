@@ -22,8 +22,6 @@ typedef struct
      /* Running option */
      struct
      {
-          //Bool second;
-          //Bool twelve;
           int color;
      } option;
 
