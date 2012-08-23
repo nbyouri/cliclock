@@ -1,3 +1,8 @@
+/* cli-clock 
+ * See line 72 to setup background and foreground colors. 
+ * Thanks to xorg-62 for tty-clock
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
