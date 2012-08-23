@@ -4,7 +4,6 @@
 #include <signal.h>
 #include <ncurses.h>
 #include <unistd.h>
-#include <getopt.h>
 
 /* Macro */
 typedef enum { False, True } Bool;
@@ -16,11 +15,10 @@ typedef struct
      Bool running;
      int bg;
 
-     /* Running option */
-     struct
-     {
-          int color;
-     } option;
+		 struct
+		 {
+				 int color;
+		 } option;
 
      /* Clock geometry */
      struct
@@ -71,6 +69,7 @@ const Bool number[][15] =
      {1,1,1,1,0,1,1,1,1,1,0,1,1,1,1}, /* 8 */
      {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
 };
+/* User changeable options. */
 
 void
 init(void)
@@ -95,6 +94,7 @@ init(void)
      init_pair(0, cliclock->bg, cliclock->bg);
      init_pair(1, cliclock->bg, cliclock->option.color);
      init_pair(2, cliclock->option.color, cliclock->bg);
+		 
      refresh();
 
      /* Init signal handler */
@@ -126,15 +126,10 @@ init(void)
                                  cliclock->geo.w,
                                  cliclock->geo.x,
                                  cliclock->geo.y);
-     /*box(cliclock->framewin, 0, 0);*/
-		 /*
-      cliclock->framewin = newwin((LINES / 2 - (cliclock->geo.h / 2)),
+                      clock_move((LINES / 2 - (cliclock->geo.h / 2)),
                                  (COLS  / 2 - (cliclock->geo.w / 2)),
                                  cliclock->geo.w,
-                                 cliclock->geo.h,
-			                           cliclock->geo.x,
-																 cliclock->geo.y);
-			*/
+                                 cliclock->geo.h);
                                  wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
      wrefresh(cliclock->framewin);
 
@@ -260,31 +255,11 @@ clock_move(int x, int y, int w, int h)
 int
 main(int argc, char **argv)
 {
-     int c;
-
      /* Alloc cliclock */
      cliclock = malloc(sizeof(cliclock_t));
 
-     /* Default color */
      cliclock->option.color = COLOR_BLUE; 
 
-     while ((c = getopt(argc, argv, "sh:C:")) != -1)
-     {
-          switch(c)
-          {
-          case 'h':
-          default:
-               printf("usage :      clock [-h] [-C [0-7]]                               \n"
-                      "    -C [0-7]      Set the clock color                            \n"
-                      "    -h            Show this page                                 \n");
-               free(cliclock);
-               exit(EXIT_SUCCESS);
-               break;
-					case 'C':
-							 if(atoi(optarg) >= 0 && atoi(optarg) < 8)
-							      cliclock->option.color = atoi(optarg);
-          }
-     } 
      init();
 
      while(cliclock->running)
