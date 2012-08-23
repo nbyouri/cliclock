@@ -1,14 +1,12 @@
 /* cli-clock 
- * See line 72 to setup background and foreground colors. 
- * Thanks to xorg-62 for tty-clock
+ * See line 72 to set foreground color. 
+ * Thanks to xorg-62 for cli-clock
 */
 
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
-#include <signal.h>
 #include <ncurses.h>
-#include <unistd.h>
+#include <signal.h>
 
 /* Macro */
 typedef enum { False, True } Bool;
@@ -29,7 +27,6 @@ typedef struct
      struct
      {
           int x, y, w, h;
-          int a, b;
      } geo;
 
      /* Date content ([2] = number by number) */
@@ -51,11 +48,12 @@ typedef struct
 
 /* Prototypes */
 void init(void);
-void signal_handler(int signal);
 void update_hour(void);
 void draw_number(int n, int x, int y);
 void draw_clock(void);
 void clock_move(int x, int y, int w, int h);
+void set_win(void);
+void signal_handler(int signal);
 
 /* Global variable */
 cliclock_t *cliclock;
@@ -86,13 +84,12 @@ const Bool number[][15] =
  * COLOR_WHITE
 */
 #define FG_COLOR COLOR_BLUE;
-#define BG_COLOR COLOR_BLACK;
+
 void
 init(void)
 {
      struct sigaction sig;
-     cliclock->bg = BG_COLOR;
-
+     cliclock->bg = 0;
      /* Init ncurses */
      initscr();
      cbreak();
@@ -102,42 +99,31 @@ init(void)
      curs_set(False);
      clear();
 
-     /* Init default terminal color */
-     if(use_default_colors() == OK)
-          cliclock->bg = -1;
-
      /* Init color pair */
      init_pair(0, cliclock->bg, cliclock->bg);
      init_pair(1, cliclock->bg, cliclock->option.color);
      init_pair(2, cliclock->option.color, cliclock->bg);
 		 
      refresh();
+    
+		 /* Init signal handler */
+		 sig.sa_handler = signal_handler;
+		 sig.sa_flags   = 0;
+		 sigaction(SIGWINCH, &sig, NULL);
 
-     /* Init signal handler */
-     sig.sa_handler = signal_handler;
-     sig.sa_flags   = 0;
-     sigaction(SIGWINCH, &sig, NULL);
-     sigaction(SIGTERM,  &sig, NULL);
-     sigaction(SIGINT,   &sig, NULL);
-     sigaction(SIGSEGV,  &sig, NULL);
-
-     /* Init global struct */
+     /* Init global struct */ 
      cliclock->running = True;
      if(!cliclock->geo.x)
           cliclock->geo.x = 0;
      if(!cliclock->geo.y)
           cliclock->geo.y = 0;
-     if(!cliclock->geo.a)
-          cliclock->geo.a = 1;
-     if(!cliclock->geo.b)
-          cliclock->geo.b = 1;
      cliclock->geo.w = 54;
      cliclock->geo.h = 7;
      cliclock->tm = localtime(&(cliclock->lt));
      cliclock->lt = time(NULL);
      update_hour();
 
-     /* Create clock win */
+     /* Create clock win */ 
      cliclock->framewin = newwin(cliclock->geo.h,
                                  cliclock->geo.w,
                                  cliclock->geo.x,
@@ -151,30 +137,17 @@ init(void)
 
      return;
 }
-
 void
 signal_handler(int signal)
 {
-     switch(signal)
-     {
-     case SIGWINCH:
-          endwin();
-          init();
-          break;
-          /* Interruption signal */
-     case SIGINT:
-     case SIGTERM:
-          cliclock->running = False;
-          /* Segmentation fault signal */
-          break;
-     case SIGSEGV:
-          endwin();
-          fprintf(stderr, "Segmentation fault.\n");
-          exit(EXIT_FAILURE);
-          break;
-     }
-
-     return;
+		switch(signal)
+		{
+				case SIGWINCH:
+						endwin();
+						init();
+						break;
+		}
+		return;
 }
 
 void
@@ -251,10 +224,7 @@ draw_clock(void)
 void
 clock_move(int x, int y, int w, int h)
 {
-
-     /* Erase border for a clean move */
      wbkgdset(cliclock->framewin, COLOR_PAIR(0));
-     wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
      werase(cliclock->framewin);
      wrefresh(cliclock->framewin);
 
@@ -263,29 +233,24 @@ clock_move(int x, int y, int w, int h)
      wresize(cliclock->framewin, (cliclock->geo.h = h), (cliclock->geo.w = w));
 
      box(cliclock->framewin, 0, 0);
+
      wrefresh(cliclock->framewin);
 
      return;
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
-     /* Alloc cliclock */
-     cliclock = malloc(sizeof(cliclock_t));
-
+		 cliclock = malloc(sizeof(cliclock_t));
      cliclock->option.color = FG_COLOR; 
-
      init();
-
      while(cliclock->running)
      {
           update_hour();
           draw_clock();
      }
-
      free(cliclock);
      endwin();
-
      return 0;
 }
