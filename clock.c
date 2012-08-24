@@ -23,35 +23,35 @@ typedef enum { False, True } Bool;
 /* Global cliclock struct */
 typedef struct
 {
-     /* while() boolean */
-     Bool running;
-     int bg;
-     struct
-     {
-          int color;
-          long delay;
-     } option;
+ /* while() boolean */
+ Bool running;
+ int bg;
+ struct
+ {
+    int color;
+    long delay;
+ } option;
 
-     /* Clock geometry */
-     struct
-     {
-          int x, y, w, h;
-     } geo;
+ /* Clock geometry */
+ struct
+ {
+    int x, y, w, h;
+ } geo;
 
-     /* Date content ([2] = number by number) */
-     struct
-     {
-          unsigned int hour[2];
-          unsigned int minute[2];
-          unsigned int second[2];
-     } date;
+ /* Date content ([2] = number by number) */
+ struct
+ {
+    unsigned int hour[2];
+    unsigned int minute[2];
+    unsigned int second[2];
+ } date;
 
-     /* time.h utils */
-     struct tm *tm;
-     time_t lt;
+ /* time.h utils */
+ struct tm *tm;
+ time_t lt;
 
-     /* Clock member */
-     WINDOW *framewin;
+ /* Clock member */
+ WINDOW *framewin;
 
 } cliclock_t;
 
@@ -70,46 +70,46 @@ cliclock_t *cliclock;
 /* Number matrix */
 const Bool number[][15] =
 {
-     {1,1,1,1,0,1,1,0,1,1,0,1,1,1,1}, /* 0 */
-     {0,0,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 1 */
-     {1,1,1,0,0,1,1,1,1,1,0,0,1,1,1}, /* 2 */
-     {1,1,1,0,0,1,1,1,1,0,0,1,1,1,1}, /* 3 */
-     {1,0,1,1,0,1,1,1,1,0,0,1,0,0,1}, /* 4 */
-     {1,1,1,1,0,0,1,1,1,0,0,1,1,1,1}, /* 5 */
-     {1,1,1,1,0,0,1,1,1,1,0,1,1,1,1}, /* 6 */
-     {1,1,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 7 */
-     {1,1,1,1,0,1,1,1,1,1,0,1,1,1,1}, /* 8 */
-     {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
+  {1,1,1,1,0,1,1,0,1,1,0,1,1,1,1}, /* 0 */
+  {0,0,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 1 */
+  {1,1,1,0,0,1,1,1,1,1,0,0,1,1,1}, /* 2 */
+  {1,1,1,0,0,1,1,1,1,0,0,1,1,1,1}, /* 3 */
+  {1,0,1,1,0,1,1,1,1,0,0,1,0,0,1}, /* 4 */
+  {1,1,1,1,0,0,1,1,1,0,0,1,1,1,1}, /* 5 */
+  {1,1,1,1,0,0,1,1,1,1,0,1,1,1,1}, /* 6 */
+  {1,1,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 7 */
+  {1,1,1,1,0,1,1,1,1,1,0,1,1,1,1}, /* 8 */
+  {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
 };
 
 void
 init(void)
 {
-     struct sigaction sig;
-     cliclock->bg = 0;
+ struct sigaction sig;
+ cliclock->bg = 0;
 
-     /* Init ncurses */
-     initscr();
-     cbreak();
-     noecho();
-     keypad(stdscr, True);
-     start_color();
-     curs_set(False);
-     clear();
-     if(use_default_colors() == OK)
-     cliclock->bg = -1;
-     /* Init color pair */
-     init_pair(0, cliclock->bg, cliclock->bg);
-     init_pair(1, cliclock->bg, cliclock->option.color);
-     init_pair(2, cliclock->option.color, cliclock->bg);
+ /* Init ncurses */
+ initscr();
+ cbreak();
+ noecho();
+ keypad(stdscr, True);
+ start_color();
+ curs_set(False);
+ clear();
+ if(use_default_colors() == OK)
+ cliclock->bg = -1;
+ /* Init color pair */
+ init_pair(0, cliclock->bg, cliclock->bg);
+ init_pair(1, cliclock->bg, cliclock->option.color);
+ init_pair(2, cliclock->option.color, cliclock->bg);
 		 
-     refresh();
+ refresh();
     
-     /* Init signal handler */
-     sig.sa_handler = signal_handler;
-     sig.sa_flags   = 0;
-     sigaction(SIGWINCH, &sig, NULL);
-     sigaction(SIGTERM,  &sig, NULL);
+ /* Init signal handler */
+ sig.sa_handler = signal_handler;
+ sig.sa_flags   = 0;
+ sigaction(SIGWINCH, &sig, NULL);
+ sigaction(SIGTERM,  &sig, NULL);
 
  /* Init global struct */ 
  cliclock->running = True;
