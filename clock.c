@@ -96,7 +96,7 @@ init(void)
      start_color();
      curs_set(False);
      clear();
-		 if(use_default_colors() == OK)
+     if(use_default_colors() == OK)
      cliclock->bg = -1;
      /* Init color pair */
      init_pair(0, cliclock->bg, cliclock->bg);
@@ -114,9 +114,9 @@ init(void)
  /* Init global struct */ 
  cliclock->running = True;
  if(!cliclock->geo.x)
-			cliclock->geo.x = 0;
+ cliclock->geo.x = 0;
  if(!cliclock->geo.y)
-			cliclock->geo.y = 0;
+ cliclock->geo.y = 0;
  cliclock->geo.w = 54;
  cliclock->geo.h = 7;
  cliclock->tm = localtime(&(cliclock->lt));
@@ -128,9 +128,9 @@ init(void)
 			     cliclock->geo.w,
 		      	     cliclock->geo.x,
 		       	     cliclock->geo.y);
-			     clock_move((LINES / 2 - (cliclock->geo.h / 2)),
-			     (COLS  / 2 - (cliclock->geo.w / 2)));
-		             wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+ clock_move((LINES / 2 - (cliclock->geo.h / 2)),
+	   (COLS  / 2 - (cliclock->geo.w / 2)));
+ wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
  nodelay(stdscr, True);
  wrefresh(cliclock->framewin);
 
