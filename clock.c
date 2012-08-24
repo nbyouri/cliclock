@@ -86,7 +86,7 @@ void
 init(void)
 {
      struct sigaction sig;
-		 cliclock->bg = 0;
+     cliclock->bg = 0;
 
      /* Init ncurses */
      initscr();
