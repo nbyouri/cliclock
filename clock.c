@@ -88,7 +88,8 @@ void
 init(void)
 {
      struct sigaction sig;
-     cliclock->bg = 0;
+		 cliclock->bg = 0;
+
      /* Init ncurses */
      initscr();
      cbreak();
@@ -97,6 +98,9 @@ init(void)
      start_color();
      curs_set(False);
      clear();
+
+		 if(use_default_colors() == OK)
+     cliclock->bg = -1;
 
      /* Init color pair */
      init_pair(0, cliclock->bg, cliclock->bg);
