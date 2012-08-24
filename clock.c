@@ -1,6 +1,6 @@
 /* cli-clock 
  * See line 72 to set foreground color. 
- * Thanks to xorg-62 for cli-clock
+ * Thanks to xorg62 for cli-clock
 */
 #include <stdlib.h>
 #include <time.h>
