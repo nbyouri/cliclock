@@ -98,10 +98,8 @@ init(void)
      start_color();
      curs_set(False);
      clear();
-
 		 if(use_default_colors() == OK)
      cliclock->bg = -1;
-
      /* Init color pair */
      init_pair(0, cliclock->bg, cliclock->bg);
      init_pair(1, cliclock->bg, cliclock->option.color);
@@ -241,13 +239,12 @@ key_event(void)
 		}
 		return;
 }
-
 int
 main(void)
 {
 		 cliclock = malloc(sizeof(cliclock_t));
      cliclock->option.color = FG_COLOR; 
-     cliclock->option.delay = 1600000; /* 1FPS */
+     cliclock->option.delay = 40000000; 
      init();
      while(cliclock->running)
      {
