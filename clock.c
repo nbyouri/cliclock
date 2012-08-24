@@ -2,13 +2,11 @@
  * See line 72 to set foreground color. 
  * Thanks to xorg-62 for cli-clock
 */
-
 #include <stdlib.h>
 #include <time.h>
 #include <ncurses.h>
 #include <signal.h>
 
-/* Macro */
 typedef enum { False, True } Bool;
 
 /* Global cliclock struct */
@@ -21,6 +19,7 @@ typedef struct
 		 struct
 		 {
 				 int color;
+				 long delay;
 		 } option;
 
      /* Clock geometry */
@@ -51,7 +50,7 @@ void init(void);
 void update_hour(void);
 void draw_number(int n, int x, int y);
 void draw_clock(void);
-void clock_move(int x, int y, int w, int h);
+void clock_move(int x, int y);
 void set_win(void);
 void signal_handler(int signal);
 
@@ -129,10 +128,9 @@ init(void)
                                  cliclock->geo.x,
                                  cliclock->geo.y);
                       clock_move((LINES / 2 - (cliclock->geo.h / 2)),
-                                 (COLS  / 2 - (cliclock->geo.w / 2)),
-                                 cliclock->geo.w,
-                                 cliclock->geo.h);
+                                 (COLS  / 2 - (cliclock->geo.w / 2)));
                                  wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+		 nodelay(stdscr, True);
      wrefresh(cliclock->framewin);
 
      return;
@@ -149,7 +147,6 @@ signal_handler(int signal)
 		}
 		return;
 }
-
 void
 update_hour(void)
 {
@@ -174,7 +171,6 @@ update_hour(void)
 
      return;
 }
-
 void
 draw_number(int n, int x, int y)
 {
@@ -194,7 +190,6 @@ draw_number(int n, int x, int y)
 
      return;
 }
-
 void
 draw_clock(void)
 {
@@ -220,23 +215,28 @@ draw_clock(void)
      draw_number(cliclock->date.second[0], 1, 39);
      draw_number(cliclock->date.second[1], 1, 46);
 }
-
 void
-clock_move(int x, int y, int w, int h)
+clock_move(int x, int y)
 {
-     wbkgdset(cliclock->framewin, COLOR_PAIR(0));
-     werase(cliclock->framewin);
-     wrefresh(cliclock->framewin);
-
-     /* Frame win move */
      mvwin(cliclock->framewin, (cliclock->geo.x = x), (cliclock->geo.y = y));
-     wresize(cliclock->framewin, (cliclock->geo.h = h), (cliclock->geo.w = w));
-
-     box(cliclock->framewin, 0, 0);
-
-     wrefresh(cliclock->framewin);
-
      return;
+}
+void 
+key_event(void)
+{
+		int c;
+    struct timespec length = { 0, cliclock->option.delay };
+		switch(c = wgetch(stdscr))
+		{
+				case 'q':
+				case 'Q':
+						cliclock->running = False;
+						break;
+				default:
+						nanosleep(&length, NULL);
+						break;
+		}
+		return;
 }
 
 int
@@ -244,11 +244,13 @@ main(void)
 {
 		 cliclock = malloc(sizeof(cliclock_t));
      cliclock->option.color = FG_COLOR; 
+     cliclock->option.delay = 40000000; /* 25FPS */
      init();
      while(cliclock->running)
      {
           update_hour();
           draw_clock();
+					key_event();
      }
      free(cliclock);
      endwin();
