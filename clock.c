@@ -229,7 +229,6 @@ key_event(void)
 		switch(c = wgetch(stdscr))
 		{
 				case 'q':
-				case 'Q':
 						cliclock->running = False;
 						break;
 				default:
@@ -244,7 +243,7 @@ main(void)
 {
 		 cliclock = malloc(sizeof(cliclock_t));
      cliclock->option.color = FG_COLOR; 
-     cliclock->option.delay = 40000000; /* 25FPS */
+     cliclock->option.delay = 1600000; /* 1FPS */
      init();
      while(cliclock->running)
      {
