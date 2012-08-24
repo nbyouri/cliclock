@@ -2,10 +2,10 @@
 
 - Compile with `cc -lcurses`
 
-- Centered clock with seconds, 24h format, 1fps
+- Centered clock with seconds, 24h format
 
 - User can change fg color by recompiling, see FG_COLOR
 
 - Use 'q' to quit
 
-Fork of the tty-clock by xorg-62.
+Fork of the tty-clock by xorg62.
