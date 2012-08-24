@@ -1,7 +1,3 @@
-#TTY-Clock MakeFile
-#Under BSD License
-#See clock.c for the license detail.
-
 SRC = clock.c
 CC = cc
 BIN = datclock
