@@ -26,12 +26,11 @@ typedef struct
      /* while() boolean */
      Bool running;
      int bg;
-
-		 struct
-		 {
-				 int color;
-				 long delay;
-		 } option;
+     struct
+     {
+          int color;
+          long delay;
+     } option;
 
      /* Clock geometry */
      struct
@@ -106,11 +105,11 @@ init(void)
 		 
      refresh();
     
-		 /* Init signal handler */
-		 sig.sa_handler = signal_handler;
-		 sig.sa_flags   = 0;
-		 sigaction(SIGWINCH, &sig, NULL);
-		 sigaction(SIGTERM,  &sig, NULL);
+     /* Init signal handler */
+     sig.sa_handler = signal_handler;
+     sig.sa_flags   = 0;
+     sigaction(SIGWINCH, &sig, NULL);
+     sigaction(SIGTERM,  &sig, NULL);
 
  /* Init global struct */ 
  cliclock->running = True;
@@ -126,12 +125,12 @@ init(void)
 
  /* Create clock win */ 
  cliclock->framewin = newwin(cliclock->geo.h,
-														 cliclock->geo.w,
-														 cliclock->geo.x,
-														 cliclock->geo.y);
-									clock_move((LINES / 2 - (cliclock->geo.h / 2)),
-														 (COLS  / 2 - (cliclock->geo.w / 2)));
-														 wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+			     cliclock->geo.w,
+		      	     cliclock->geo.x,
+		       	     cliclock->geo.y);
+			     clock_move((LINES / 2 - (cliclock->geo.h / 2)),
+			     (COLS  / 2 - (cliclock->geo.w / 2)));
+		             wborder(cliclock->framewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
  nodelay(stdscr, True);
  wrefresh(cliclock->framewin);
 
@@ -142,12 +141,12 @@ signal_handler(int signal)
 {
 switch(signal)
 {
-		case SIGWINCH: /* window resize signal */
-				endwin();
-				init();
-				break;
-		case SIGTERM:
-				cliclock->running = False; /* interruption signal */
+   case SIGWINCH: /* window resize signal */
+	endwin();
+	init();
+	break;
+   case SIGTERM:
+	cliclock->running = False; /* interruption signal */
 }
 return;
 }
@@ -182,13 +181,13 @@ draw_number(int n, int x, int y)
 
  for(i = 0; i < 30; ++i, ++sy)
  {
-			if(sy == y + 6)
-			{
-					 sy = y;
-					 ++x;
-			}
-			wbkgdset(cliclock->framewin, COLOR_PAIR(number[n][i/2]));
-			mvwaddch(cliclock->framewin, x, sy, ' ');
+     if(sy == y + 6)
+     {
+	 sy = y;
+	 ++x;
+     }
+ wbkgdset(cliclock->framewin, COLOR_PAIR(number[n][i/2]));
+ mvwaddch(cliclock->framewin, x, sy, ' ');
  }
  wrefresh(cliclock->framewin);
 
@@ -232,12 +231,12 @@ int c;
 struct timespec length = { 0, cliclock->option.delay };
 switch(c = wgetch(stdscr))
 {
-		case 'q':
-				cliclock->running = False;
-				break;
-		default:
-				nanosleep(&length, NULL);
-				break;
+   case 'q':
+	cliclock->running = False;
+	break;
+   default:
+	nanosleep(&length, NULL);
+	break;
 }
 return;
 }
@@ -250,9 +249,9 @@ main(void)
  init();
  while(cliclock->running)
  {
-			update_hour();
-			draw_clock();
-			key_event();
+     update_hour();
+     draw_clock();
+     key_event();
  }
  free(cliclock);
  endwin();
