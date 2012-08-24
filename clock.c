@@ -111,6 +111,7 @@ init(void)
 		 sig.sa_handler = signal_handler;
 		 sig.sa_flags   = 0;
 		 sigaction(SIGWINCH, &sig, NULL);
+		 sigaction(SIGTERM,  &sig, NULL);
 
      /* Init global struct */ 
      cliclock->running = True;
@@ -142,10 +143,12 @@ signal_handler(int signal)
 {
 		switch(signal)
 		{
-				case SIGWINCH:
+				case SIGWINCH: /* window resize signal */
 						endwin();
 						init();
 						break;
+				case SIGTERM:
+						cliclock->running = False; /* interruption signal */
 		}
 		return;
 }
