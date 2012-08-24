@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 /*
  * Thanks to xorg62 for tty-clock
  */
-=======
-/* cli-clock 
- * See line 72 to set foreground color. 
- * Thanks to xorg62 for cli-clock
-*/
->>>>>>> 1d424250b6aa168f2bf3496386d65498ac7c1577
 #include <stdlib.h>
 #include <time.h>
 #include <ncurses.h>
