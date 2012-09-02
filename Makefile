@@ -6,7 +6,7 @@ CFLAGS = -Wall -std=c99
 LDFLAGS = -lcurses
 
 
-datclock : ${SRC}
+cli-clock : ${SRC}
 
 	@echo "build ${SRC}"
 	@echo "CC ${CFLAGS} ${LDFLAGS} ${SRC}"
