@@ -1,6 +1,6 @@
 SRC = clock.c
 CC = cc
-BIN = datclock
+BIN = cli-clock
 INSTALLPATH = /usr/local/bin/
 CFLAGS = -Wall -std=c99
 LDFLAGS = -lcurses
