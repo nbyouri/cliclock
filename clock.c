@@ -5,6 +5,7 @@
 #include <time.h>
 #include <ncurses.h>
 #include <signal.h>
+#include <getopt.h>
 /* User changeable options. */
 /* Available:
  * COLOR_BLACK
@@ -15,8 +16,9 @@
  * COLOR_MAGENTA
  * COLOR_CYAN
  * COLOR_WHITE
-*/
-#define FG_COLOR COLOR_BLUE;
+ */
+#define DEFAULT_FG_COLOR COLOR_BLUE
+#define DEFAULT_FG_COLOR_NAME "blue"
 
 typedef enum { False, True } Bool;
 
@@ -63,6 +65,7 @@ void draw_clock(void);
 void clock_move(int x, int y);
 void set_win(void);
 void signal_handler(int signal);
+void usage(void);
 
 /* Global variable */
 cliclock_t *cliclock;
@@ -241,11 +244,43 @@ switch(c = wgetch(stdscr))
 return;
 }
 int
-main(void)
+main(int argc, char **argv)
 {
+ // Parses otpions
+ int color = DEFAULT_FG_COLOR;
+ int c;
+ int option_index = 0;
+ static struct option long_options[] =
+ {
+     {"help", no_argument, 0, 'h'},
+     {"color", required_argument, 0, 'c'}
+ };
+
+ while ((c = getopt_long (argc, argv, "hc:", long_options, &option_index)) != -1)
+ {
+     switch (c)
+     {
+         case 'c':
+         	color = atoi(optarg);
+                if (color < 0 || color > 7)
+                {
+                    printf("Invalid color number: %d\n\n", color);
+                    printf("Valid colors are black (0), red (1),  green (2), yellow (3),\n");
+                    printf("                 blue (4), magenta (5), cyan (6), white (7).\n");
+                    return 1;
+                }
+		break;
+
+         case 'h':
+                usage();
+                return 0;
+     }
+ }
+
+ // Initializes clock
  cliclock = malloc(sizeof(cliclock_t));
- cliclock->option.color = FG_COLOR; 
- cliclock->option.delay = 40000000; 
+ cliclock->option.color = color;
+ cliclock->option.delay = 40000000;
  init();
  while(cliclock->running)
  {
@@ -256,4 +291,11 @@ main(void)
  free(cliclock);
  endwin();
  return 0;
+}
+
+void
+usage (void)
+{
+ printf(" Usage: cli-clock [-c color]\n");
+ printf("  -c [color]: Use this color for clock (default: %s)\n", DEFAULT_FG_COLOR_NAME);
 }
