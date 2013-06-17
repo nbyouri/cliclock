@@ -8,7 +8,7 @@
 
 - Use 'q' to quit
 
-![image](http://paste.xinu.at/ne0i/)
+![image](http://paste.unixhub.net/index.php/FgL0/)
 
 
 
