@@ -5,9 +5,7 @@
 #include <time.h>
 #include <ncurses.h>
 #include <signal.h>
-#include <getopt.h>
 #include <stdbool.h>
-/* User changeable options. */
 /* Available:
  * COLOR_BLACK
  * COLOR_RED
@@ -16,29 +14,21 @@
  * COLOR_BLUE
  * COLOR_MAGENTA
  * COLOR_CYAN
- * COLOR_WHITE
- */
+ * COLOR_WHITE */
 #define DEFAULT_FG_COLOR COLOR_BLUE
 #define DEFAULT_FG_COLOR_NAME "blue"
 
-typedef struct
-{
+typedef struct {
     bool running;
     int bg;
-    struct
-    {
+    struct {
         int color;
         long delay;
     } option;
-
-    struct
-    {
+    struct {
         int x, y, w, h;
     } geo;
-
-    /* Date content ([2] = number by number) */
-    struct
-    {
+    struct {
         unsigned int hour[2];
         unsigned int minute[2];
         unsigned int second[2];
