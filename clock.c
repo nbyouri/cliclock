@@ -116,8 +116,7 @@ static void init(void)
 }
 static void signal_handler(int signal)
 {
-    switch(signal)
-    {
+    switch(signal) {
         case SIGWINCH: /* window resize signal */
             endwin();
             init();
@@ -148,10 +147,8 @@ static void draw_number(int n, int x, int y)
 {
     int i, sy = y;
 
-    for(i = 0; i < 30; ++i, ++sy)
-    {
-        if(sy == y + 6)
-        {
+    for(i = 0; i < 30; ++i, ++sy) {
+        if(sy == y + 6) {
             sy = y;
             ++x;
         }
@@ -162,8 +159,7 @@ static void draw_number(int n, int x, int y)
 
     return;
 }
-    void
-draw_clock(void)
+static void draw_clock(void)
 {
     /* Draw hour numbers */
     draw_number(cliclock->date.hour[0], 1, 1);
@@ -192,8 +188,7 @@ static void key_event(void)
 {
     int c;
     struct timespec length = { 0, cliclock->option.delay };
-    switch(c = wgetch(stdscr))
-    {
+    switch(c = wgetch(stdscr)) {
         case 'q':
             cliclock->running = false;
             break;
@@ -211,8 +206,7 @@ int main(int argc, char **argv)
     cliclock->option.color = color;
     cliclock->option.delay = 40000000;
     init();
-    while(cliclock->running)
-    {
+    while(cliclock->running) {
         update_hour();
         draw_clock();
         key_event();
