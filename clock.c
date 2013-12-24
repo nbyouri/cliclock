@@ -198,10 +198,9 @@ static void key_event(void)
     }
     return;
 }
-int main(int argc, char **argv)
+int main(void)
 {
     int color = DEFAULT_FG_COLOR;
-    // Initializes clock
     cliclock = malloc(sizeof(cliclock_t));
     cliclock->option.color = color;
     cliclock->option.delay = 40000000;
