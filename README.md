@@ -1,14 +1,20 @@
-# Cli clock
+# Cli Clock
 
-- Compile with `cc -lcurses` (`cc -I/usr/local/include -L/usr/local/lib -lcurses` for FreeBSD)
+## Compilation
+
+- Linux : `cc -l curses` 
+
+- FreeBSD : `cc -I/usr/local/include -L/usr/local/lib -l curses`
+
+## Features
 
 - Centered clock with seconds, 24h format
 
-- User can change fg color with -c or --color parameter
+- ~~User can change fg color with -c or --color parameter~~ Broken?
 
 - Use 'q' to quit
 
-![image](http://paste.unixhub.net/index.php/FgL0/)
+![image](http://i.imgur.com/fqC7YeQ.png)
 
 
 
