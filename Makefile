@@ -3,7 +3,7 @@ CC = cc
 BIN = cli-clock
 INSTALLPATH = /usr/local/bin/
 CFLAGS = -Wall -std=c99
-LDFLAGS = -lcurses
+LDFLAGS = -l curses
 
 
 cli-clock : ${SRC}
