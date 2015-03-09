@@ -1,6 +1,6 @@
 # Cli Clock
 
-## Compilation
+## Compiling
 
 - Linux : `cc -l curses` 
 
