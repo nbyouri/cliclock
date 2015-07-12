@@ -1,4 +1,4 @@
-# Cli clock
+# cliclock
 
 ## Installation
 * make
