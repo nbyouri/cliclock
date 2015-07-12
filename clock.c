@@ -1,11 +1,13 @@
 /*
  * Thanks to xorg62 for tty-clock
+ *      and genie5 for 12clock
  */
 #include <stdlib.h>
 #include <time.h>
 #include <ncurses.h>
 #include <signal.h>
 #include <stdbool.h>
+#include <unistd.h>
 /* Available:
  * COLOR_BLACK
  * COLOR_RED
@@ -16,7 +18,7 @@
  * COLOR_CYAN
  * COLOR_WHITE */
 #define DEFAULT_FG_COLOR COLOR_BLUE
-#define DEFAULT_FG_COLOR_NAME "blue"
+// #define DEFAULT_FG_COLOR_NAME "white"
 
 typedef struct {
     bool running;
@@ -80,6 +82,7 @@ static void init(void)
     init_pair(0, cliclock->bg, cliclock->bg);
     init_pair(1, cliclock->bg, cliclock->option.color);
     init_pair(2, cliclock->option.color, cliclock->bg);
+    init_pair(3, -1, DEFAULT_FG_COLOR);
 
     refresh();
 
@@ -95,7 +98,8 @@ static void init(void)
         cliclock->geo.x = 0;
     if(!cliclock->geo.y)
         cliclock->geo.y = 0;
-    cliclock->geo.w = 54;
+    cliclock->geo.w = 74;
+    /*54*/
     cliclock->geo.h = 7;
     cliclock->tm = localtime(&(cliclock->lt));
     cliclock->lt = time(NULL);
@@ -133,8 +137,16 @@ static void update_hour(void)
     cliclock->lt = time(NULL);
     ihour = cliclock->tm->tm_hour;
     /* Set hour */
-    cliclock->date.hour[0] = ihour / 10;
-    cliclock->date.hour[1] = ihour % 10;
+    // 24 - Hours mode
+    // cliclock->date.hour[0] = ihour / 10;
+    // cliclock->date.hour[1] = ihour % 10;
+    cliclock->date.hour[0] = (ihour % 12) / 10;
+    cliclock->date.hour[1] = (ihour % 12) % 10;
+    if ((ihour % 12) == 0)
+    {
+        cliclock->date.hour[0] = 1;
+        cliclock->date.hour[1] = 2;
+    } 
     /* Set minutes */
     cliclock->date.minute[0] = cliclock->tm->tm_min / 10;
     cliclock->date.minute[1] = cliclock->tm->tm_min % 10;
@@ -165,19 +177,45 @@ static void draw_clock(void)
     draw_number(cliclock->date.hour[0], 1, 1);
     draw_number(cliclock->date.hour[1], 1, 8);
     /* 2 dot for number separation */
-    wbkgdset(cliclock->framewin, COLOR_PAIR(1));
+    wbkgdset(cliclock->framewin, COLOR_PAIR(3));
     mvwaddstr(cliclock->framewin, 2, 16, "  ");
     mvwaddstr(cliclock->framewin, 4, 16, "  ");
     /* Draw minute numbers */
     draw_number(cliclock->date.minute[0], 1, 20);
     draw_number(cliclock->date.minute[1], 1, 27);
     /* 2 dot for number separation */
-    wbkgdset(cliclock->framewin, COLOR_PAIR(1));
+    wbkgdset(cliclock->framewin, COLOR_PAIR(3));
     mvwaddstr(cliclock->framewin, 2, 35, "  ");
     mvwaddstr(cliclock->framewin, 4, 35, "  ");
     /* Draw second numbers */
     draw_number(cliclock->date.second[0], 1, 39);
     draw_number(cliclock->date.second[1], 1, 46);
+    /* Draw AM or PM */
+    wbkgdset(cliclock->framewin, COLOR_PAIR(3));
+    mvwaddstr(cliclock->framewin, 1, 58, "      ");
+    mvwaddstr(cliclock->framewin, 2, 58, "  ");
+    mvwaddstr(cliclock->framewin, 2, 62, "  ");
+    mvwaddstr(cliclock->framewin, 3, 58, "      ");
+    mvwaddstr(cliclock->framewin, 4, 58, "  ");
+    mvwaddstr(cliclock->framewin, 5, 58, "  ");
+    if(cliclock->tm->tm_hour < 12)
+     /*if(true)*/
+    {   mvwaddstr(cliclock->framewin, 4, 62, "  ");
+        mvwaddstr(cliclock->framewin, 5, 62, "  ");}
+        
+    mvwaddstr(cliclock->framewin, 1, 65, "        ");
+    mvwaddstr(cliclock->framewin, 2, 65, "  ");
+    mvwaddstr(cliclock->framewin, 3, 65, "  ");
+    mvwaddstr(cliclock->framewin, 4, 65, "  ");
+    mvwaddstr(cliclock->framewin, 5, 65, "  ");
+    mvwaddstr(cliclock->framewin, 2, 68, "  ");
+    mvwaddstr(cliclock->framewin, 3, 68, "  ");
+    mvwaddstr(cliclock->framewin, 4, 68, "  ");
+    mvwaddstr(cliclock->framewin, 5, 68, "  ");
+    mvwaddstr(cliclock->framewin, 2, 71, "  ");
+    mvwaddstr(cliclock->framewin, 3, 71, "  ");
+    mvwaddstr(cliclock->framewin, 4, 71, "  ");
+    mvwaddstr(cliclock->framewin, 5, 71, "  ");
 }
 static void clock_move(int x, int y)
 {
