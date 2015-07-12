@@ -15,4 +15,4 @@
 
 
 Fork of the tty-clock by xorg62.
-Borrowed from 12clock by genie5
+Code borrowed from 12clock by genie5
