@@ -7,7 +7,7 @@
 #include <ncurses.h>
 #include <signal.h>
 #include <stdbool.h>
-#include <unistd.h>
+#include <getopt.h>
 /* Available:
  * COLOR_BLACK
  * COLOR_RED
@@ -18,7 +18,7 @@
  * COLOR_CYAN
  * COLOR_WHITE */
 #define DEFAULT_FG_COLOR COLOR_BLUE
-// #define DEFAULT_FG_COLOR_NAME "white"
+#define DEFAULT_FG_COLOR_NAME "blue"
 
 typedef struct {
     bool running;
@@ -49,6 +49,7 @@ static void draw_number(int n, int x, int y);
 static void draw_clock(void);
 static void clock_move(int x, int y);
 static void signal_handler(int signal);
+static void usage(void);
 
 cliclock_t *cliclock;
 
@@ -177,21 +178,21 @@ static void draw_clock(void)
     draw_number(cliclock->date.hour[0], 1, 1);
     draw_number(cliclock->date.hour[1], 1, 8);
     /* 2 dot for number separation */
-    wbkgdset(cliclock->framewin, COLOR_PAIR(3));
+    wbkgdset(cliclock->framewin, COLOR_PAIR(1));
     mvwaddstr(cliclock->framewin, 2, 16, "  ");
     mvwaddstr(cliclock->framewin, 4, 16, "  ");
     /* Draw minute numbers */
     draw_number(cliclock->date.minute[0], 1, 20);
     draw_number(cliclock->date.minute[1], 1, 27);
     /* 2 dot for number separation */
-    wbkgdset(cliclock->framewin, COLOR_PAIR(3));
+    wbkgdset(cliclock->framewin, COLOR_PAIR(1));
     mvwaddstr(cliclock->framewin, 2, 35, "  ");
     mvwaddstr(cliclock->framewin, 4, 35, "  ");
     /* Draw second numbers */
     draw_number(cliclock->date.second[0], 1, 39);
     draw_number(cliclock->date.second[1], 1, 46);
     /* Draw AM or PM */
-    wbkgdset(cliclock->framewin, COLOR_PAIR(3));
+    wbkgdset(cliclock->framewin, COLOR_PAIR(1));
     mvwaddstr(cliclock->framewin, 1, 58, "      ");
     mvwaddstr(cliclock->framewin, 2, 58, "  ");
     mvwaddstr(cliclock->framewin, 2, 62, "  ");
@@ -236,9 +237,41 @@ static void key_event(void)
     }
     return;
 }
-int main(void)
+int main(int argc, char **argv)
 {
+     // Parses options
     int color = DEFAULT_FG_COLOR;
+    int c;
+    int option_index = 0;
+    static struct option long_options[] =
+    {
+        {"help", no_argument, 0, 'h'},
+        {"color", required_argument, 0, 'c'}
+    };
+
+    while ((c = getopt_long (argc, argv, "hc:", long_options, &option_index)) != -1)
+    {
+        switch (c)
+        {
+            case 'c':
+                color = atoi(optarg);
+                    if (color < 0 || color > 7)
+                    {
+                        printf("Invalid color number: %d\n\n", color);
+                        printf("Valid colors are black (0), red (1),  green (2), yellow (3),\n");
+                        printf("                 blue (4), magenta (5), cyan (6), white (7).\n");
+                        return 1;
+                    }
+                break;
+
+            case 'h':
+                    usage();
+                    return 0;
+     }
+ }
+
+ // Initializes clock
+    //int color = DEFAULT_FG_COLOR;
     cliclock = malloc(sizeof(cliclock_t));
     cliclock->option.color = color;
     cliclock->option.delay = 40000000;
@@ -251,4 +284,9 @@ int main(void)
     free(cliclock);
     endwin();
     return 0;
+}
+void usage(void)
+{
+ printf(" Usage: cliclock [-c color]\n");
+ printf("  -c [color]: Use this color for clock (default: %s)\n", DEFAULT_FG_COLOR_NAME);
 }
