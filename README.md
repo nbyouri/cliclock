@@ -10,7 +10,7 @@
 - ~~User can change fg color with -c or --color parameter~~ Broken?
 - Use 'q' to quit
 
-+![image](http://i.imgur.com/fqC7YeQ.png)
+![image](http://i.imgur.com/fqC7YeQ.png)
 
 
 
