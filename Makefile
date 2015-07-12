@@ -1,21 +1,21 @@
 SRC = clock.c
 CC = cc
-BIN = cli-clock
+BIN = cliclock
 INSTALLPATH = /usr/local/bin/
 CFLAGS = -Wall -std=c99
 LDFLAGS = -lcurses
 
 
-cli-clock : ${SRC}
+cliclock : ${SRC}
 
 	@echo "build ${SRC}"
-	@echo "CC ${CFLAGS} ${LDFLAGS} ${SRC}"
-	@${CC} ${CFLAGS} ${LDFLAGS} ${SRC} -o ${BIN}
+	@echo "CC ${LDFLAGS} -o${BIN} ${SRC}"
+	@${CC} ${LDFLAGS} -o${BIN} ${SRC}
 
 install : ${BIN}
 
 	@echo "installing binary file to ${INSTALLPATH}${BIN}"
-	@cp ${BIN} ${INSTALLPATH}
+	@mv ${BIN} ${INSTALLPATH}
 	@chmod 755 ${INSTALLPATH}${BIN}
 	@echo "installed"
 

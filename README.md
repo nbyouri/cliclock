@@ -1,15 +1,18 @@
-# Cli clock
+# cliclock
 
-- Compile with `cc -lcurses` (`cc -I/usr/local/include -L/usr/local/lib -lcurses` for FreeBSD)
+## Installation
+* make
+* sudo make install
 
-- Centered clock with seconds, 24h format
+## Features
 
-- User can change fg color with -c or --color parameter
-
+- Centered clock with seconds, ~~24h~~ 12h format
+- User can actually change fg color with -c parameter
 - Use 'q' to quit
 
-![image](http://paste.unixhub.net/index.php/FgL0/)
+![image](http://i.imgur.com/fqC7YeQ.png)
 
 
 
 Fork of the tty-clock by xorg62.
+Code borrowed from 12clock by genie5
